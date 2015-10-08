@@ -82,7 +82,7 @@ def get_all():
 
 
 def get_by_id(id):
-    """Return a melon, given its ID."""
+    """Return a Melon, given its ID."""
 
     # This relies on access to the global dictionary `melon_types`
 
