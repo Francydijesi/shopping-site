@@ -87,19 +87,14 @@ def add_to_cart(id1):
 
     # add 1 to the quantity of melons of type <id> (which will be 0 if we
     # haven't yet put any of that kind of melon into the cart)
-    print "current quantity of melon type", id1, ": ", cart.get(id, 0)
     cart[id1] = cart.setdefault(id1, 0) + 1
-    print "updated quantity of melon type", id1, ": ", cart[id1]
 
+    # add a confirmation message to the "flash" messages buffer
+    melon_type = melons.get_by_id(id1).melon_type
+    flash_message = "Successfully added a {type} melon to your cart."
+    flash(flash_message.format(type=melon_type))
 
-
-    # TODO: Finish shopping cart functionality
-
-    # The logic here should be something like:
-    #
-    # - add the id of the melon they bought to the cart in the session
-
-    return "Oops! This needs to be implemented!"
+    return redirect("/cart")
 
 
 @app.route("/login", methods=["GET"])
