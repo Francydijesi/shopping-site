@@ -60,21 +60,30 @@ def show_melon(melon_id):
 def shopping_cart():
     """Display content of shopping cart."""
 
-    # TODO: Display the contents of the shopping cart.
+    basket = []
+    cart = session.setdefault("cart", {})
+    order_total = 0
 
-    # The logic here will be something like:
-    #
-    # - get the list-of-ids-of-melons from the session cart
-    # - loop over this list:
-    #   - keep track of information about melon types in the cart
-    #   - keep track of the total amt ordered for a melon-type
-    #   - keep track of the total amt of the entire order
-    # - hand to the template the total order cost and the list of melon types
+    # for each melon in the shopping cart, add its info to the 'basket'
+    # list which will get passed to the cart page
+    for melon_id in cart:
+        melon = melons.get_by_id(int(melon_id))
+        quantity = cart[melon_id]
+        price = melon.price
+        total = quantity * price
+        name = melon.common_name
 
-    return render_template("cart.html")
+        basket.append((name, quantity, price, total))
+        order_total += total
 
 
-@app.route("/add_to_cart/<int:id1>")
+    # TODO: format shopping cart number in cart.html
+    # TODO: fix a/an problem in flashed messages
+
+    return render_template("cart.html", cart=basket, order_total=order_total)
+
+
+@app.route("/add_to_cart/<id1>")
 def add_to_cart(id1):
     """Add a melon to cart and redirect to shopping cart page.
 
@@ -82,15 +91,21 @@ def add_to_cart(id1):
     page and display a confirmation message: 'Successfully added to cart'.
     """
 
+
+    id1 = str(id1)
+
     # get cart from session or create it if it doesn't already exist
     cart = session.setdefault("cart", {})
+    print cart
 
     # add 1 to the quantity of melons of type <id> (which will be 0 if we
     # haven't yet put any of that kind of melon into the cart)
     cart[id1] = cart.setdefault(id1, 0) + 1
+    print cart
 
     # add a confirmation message to the "flash" messages buffer
-    melon_type = melons.get_by_id(id1).melon_type
+    melon_type = melons.get_by_id(int(id1)).common_name.lower()
+    print melon_type
     flash_message = "Successfully added a {type} melon to your cart."
     flash(flash_message.format(type=melon_type))
 
